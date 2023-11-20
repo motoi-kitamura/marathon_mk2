@@ -2,7 +2,8 @@ const express = require("express");
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 
-const port = 2455; // 自分の社員番号を入力
+// const port = 3000; 
+const port = 12455;
 
 const cors = require("cors");
 app.use(cors());
@@ -10,10 +11,11 @@ app.use(cors());
 const { Pool } = require("pg");
 const pool = new Pool({
   user: "user_2455", // PostgreSQLのユーザー名
-  host: "localhost",
+  host: "db",//localhostから変更しました
   database: "crm_2455", // PostgreSQLのデータベース名
   password: "pass_2455", // PostgreSQLのパスワード
   port: 5432,
+  // port: 2455,
 });
 
 app.listen(port, () => {
