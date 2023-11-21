@@ -3,16 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>案件情報入力</title>
+    <title>[顧客]新規追加確認画面</title>
     <!-- Bootstrap CSSの読み込み -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container mt-5">
-        <!-- ここにHTMLを書く -->
+        <h2>顧客新規追加確認画面</h2>
+        <p>顧客情報を登録しますか？</p>
+
+        <!-- 表示される項目と内容 -->
+        <div class="form-group">
+            <label for="confirmedCompanyName">会社名:</label>
+            <span id="confirmedCompanyName"></span>
+        </div>
+        <div class="form-group">
+            <label for="confirmedIndustry">業種:</label>
+            <span id="confirmedIndustry"></span>
+        </div>
+        <div class="form-group">
+            <label for="confirmedContact">連絡先:</label>
+            <span id="confirmedContact"></span>
+        </div>
+        <div class="form-group">
+            <label for="confirmedLocation">所在地:</label>
+            <span id="confirmedLocation"></span>
+        </div>
+
+        <!-- ボタン -->
+        <a id="cancelButton" class="btn btn-secondary" href="http://localhost/customer/add.html">&lt; 戻る</a>
+        <button id="submitButton" class="btn btn-success">登録</button>
     </div>
     <script type="module">
-        <!-- ここにJSを書く -->
+        import config from '../config.js';
+        // JavaScriptでURLからクエリパラメータを取得する関数
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        // URLから会社名、業種、連絡先、所在地のクエリパラメータを取得
+        var companyName = getParameterByName('companyName');
+        var industry = getParameterByName('industry');
+        var contact = getParameterByName('contact');
+        var location = getParameterByName('location');
+
+        // 確認画面の各項目に値をセット
+        document.getElementById('confirmedCompanyName').innerText = companyName;
+        document.getElementById('confirmedIndustry').innerText = industry;
+        document.getElementById('confirmedContact').innerText = contact;
+        document.getElementById('confirmedLocation').innerText = location;
+
+        // 登録ボタンのクリックイベント
+        document.getElementById('submitButton').addEventListener('click', function() {
+            // 登録処理を行う場合はここに追加
+
+            // formdataをconfig.apiUrl + '/add-customer'にポストする
+            const formData = new FormData();
+            formData.append('companyName', companyName);
+            formData.append('industry', industry);
+            formData.append('contact', contact);
+            formData.append('location', location);
+
+            fetch(config.apiUrl + '/add-customer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams([...formData])
+            }).then(response => response.json())
+              .then(data => {
+                if(data.success) {
+                    alert('顧客情報が正常に登録されました。');
+                    window.location.href = 'http://localhost/customer/list.html';
+                } else {
+                    alert('登録に失敗しました。');
+                }
+              })
+              .catch(error => console.error('Error:', error));
+        });
     </script>
     <!-- BootstrapのJavaScriptの読み込み -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
