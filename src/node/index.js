@@ -32,6 +32,16 @@ app.get("/customers", async (req, res) => {
   }
 });
 
+app.get("/customer/:customerId", async (req, res) => {
+  try {
+    const customerData = await pool.query("SELECT * FROM customers WHERE customer_id = $1", [req.params.customerId]);
+    res.send(customerData.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
+  }
+});
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
