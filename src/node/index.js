@@ -42,6 +42,16 @@ app.get("/customer/:customerId", async (req, res) => {
   }
 });
 
+app.delete("/customer/:customerId", async (req, res) => {
+  try {
+    await pool.query("DELETE FROM customers WHERE customer_id = $1", [req.params.customerId]);
+    res.send(`Customer with ID ${req.params.customerId} deleted successfully.`);
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
+  }
+});
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
