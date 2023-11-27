@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[顧客]編集画面</title>
+    <!-- Bootstrap CSSの読み込み -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">顧客情報を編集してください</h2>
+        <form id="customer-form">
+            <div class="form-group">
+                <label for="companyName">会社名:</label>
+                <input type="text" class="form-control" id="companyName" name="companyName" required>
+            </div>
+            <div class="form-group">
+                <label for="industry">業種:</label>
+                <input type="text" class="form-control" id="industry" name="industry" required>
+            </div>
+            <div class="form-group">
+                <label for="contact">連絡先:</label>
+                <input type="text" class="form-control" id="contact" name="contact" required>
+            </div>
+            <div class="form-group">
+                <label for="location">所在地:</label>
+                <input type="text" class="form-control" id="location" name="location" required>
+            </div>
+            <button type="button" class="btn btn-primary" id="updateButton">更新</button>
+        </form>
+    </div>
+    <script type="module">
+        import config from '../config.js';
+
+        const customerId = new URLSearchParams(window.location.search).get('id');
+
+        // 顧客情報を取得してフォームにセット
+        fetch(`${config.apiUrl}/customer/${customerId}`)
+            .then(response => response.json())
+            .then(customer => {
+                document.getElementById('companyName').value = customer.company_name;
+                document.getElementById('industry').value = customer.industry;
+                document.getElementById('contact').value = customer.contact;
+                document.getElementById('location').value = customer.location;
+            });
+
+        // 更新ボタンがクリックされたときの処理
+        document.getElementById('updateButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            const formData = new FormData(document.getElementById('customer-form'));
+
+            fetch(`${config.apiUrl}/customer/${customerId}`, {
+                method: 'PUT',
+                body: new URLSearchParams([...formData])
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('顧客情報が正常に更新されました。');
+                    window.location.href = `detail.html?id=${customerId}`;
+                } else {
+                    alert('更新に失敗しました。');
+                }
+            })
+            .catch(error => console.error('Error:', error.message));
+        });
+    </script>
+    <!-- BootstrapのJavaScriptの読み込み -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

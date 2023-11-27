@@ -15,6 +15,7 @@
           <!-- 顧客データはここに挿入されます -->
         </tbody>
       </table>
+      <button id="editButton" class="btn btn-primary">編集</button>
       <button id="deleteButton" class="btn btn-danger">削除</button>
     </div>
 
@@ -46,7 +47,7 @@
       document.getElementById('deleteButton').addEventListener('click', function() {
         if (window.confirm('削除していいですか?')) {
           fetch(`${config.apiUrl}/customer/${customerId}`, {
-            method: 'delete'
+            method: 'DELETE'
           })
           .then((response) => {
             if (response.ok) {
@@ -58,6 +59,10 @@
           })
           .catch((error) => console.error(error));
         }
+      });
+
+      document.getElementById('editButton').addEventListener('click', function() {
+        window.location.href = `edit.html?id=${customerId}`;
       });
     </script>
 

@@ -42,6 +42,20 @@ app.get("/customer/:customerId", async (req, res) => {
   }
 });
 
+app.put("/customer/:customerId", async (req, res) => {
+  try {
+    const { companyName, industry, contact, location } = req.body;
+    const updatedCustomer = await pool.query(
+      "UPDATE customers SET company_name = $1, industry = $2, contact = $3, location = $4 WHERE customer_id = $5 RETURNING *",
+      [companyName, industry, contact, location, req.params.customerId]
+    );
+    res.json({ success: true, customer: updatedCustomer.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false });
+  }
+});
+
 app.delete("/customer/:customerId", async (req, res) => {
   try {
     await pool.query("DELETE FROM customers WHERE customer_id = $1", [req.params.customerId]);
